@@ -10,17 +10,41 @@ def get_running_instances():
 
 
 def get_all_instance_desc():
-    conn = boto3.resource('ec2', region_name="ap-south-1")
-    ec2 = boto3.client('ec2', region_name="ap-south-1")
-    for i in conn.instances.all():
-        print("Instance Id: {}".format(i.id))
-        print("Instance Type: {}".format(i.instance_type))
-        print("Instance IP: {}".format(i.public_ip_address))
-        print("Instance Subnet: {}".format(i.subnet))
-        avail_zone = ec2.describe_availability_zones()
-        print('Availability Zones:', avail_zone['AvailabilityZones'])
-        print("Instance Id {}".format(i.image_id))
-        print("----------------------------------------------------")
+    conn = boto3.client('ec2', region_name="ap-south-1")
+    response = conn.describe_instances()
+    response = response['Reservations']
+    # print(response[0])
+    # print(response[1])
+    for i in range(len(response)):
+        temp = response[i]
+        temp = temp['Instances'][0]
+
+        req_keys = ['ImageId', 'InstanceId', 'InstanceType', 'LaunchTime', 'Placement', 'NetworkInterfaces']
+        req_info = []
+        for k in temp.keys():
+            for i in range(len(req_keys)):
+                if k == req_keys[i]:
+                    req_info.append(temp[k])
+
+        for i in range(len(req_info)):
+            if req_keys[i] == "NetworkInterfaces":
+                temp = req_info[i]
+                if  temp == []:
+                    print("Instace terminated")
+                else:
+                    temp = temp[0]
+                    temp = temp['Association']
+                    elastic_check = temp['IpOwnerId']
+                    if elastic_check == 'amazon':
+                        elastic_check = False
+                    else:
+                        elastic_check = True
+                    print("Elastic Ip: {}".format(elastic_check))
+            else:
+                print("{0} : {1}".format(req_keys[i],req_info[i]))
+        print()
+        req_info = []
+
 
 
 def get_specfic_instances(inst_id):
@@ -62,11 +86,11 @@ def get_specfic_instances(inst_id):
 print("----------------------------------------------------")
 print("get_running_instances:")
 print()
-get_running_instances()
+# get_running_instances()
 print("----------------------------------------------------")
 print("get_instance_desc:")
 print()
 get_all_instance_desc()
 print("----------------------------------------------------")
 print("get_instance__full_desc:")
-get_specfic_instances('i-0cb4324b8c1a4334e')
+# get_specfic_instances('i-0cb4324b8c1a4334e')
