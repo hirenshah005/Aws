@@ -29,6 +29,7 @@ def get_application_info(region, req_app):
     response = conn.describe_applications(
         ApplicationNames=[req_app]
     )
+    # refine and print application info
     response = response['Applications'][0]
     req_keys = ['ApplicationArn', 'ApplicationName', 'DateCreated', 'Versions']
     req_info = []
@@ -43,6 +44,7 @@ def get_application_info(region, req_app):
         print("{0} : {1}".format(req_keys[i], req_info[i]))
     print()
 
+    # Refine and print environment info
     print("Environment Info")
     print()
     response = conn.describe_environments(
@@ -51,6 +53,7 @@ def get_application_info(region, req_app):
     response = response['Environments']
     req_info = []
 
+    # select only req key info
     for i in range(len(response)):
         temp = response[i]
         req_keys = ['EnvironmentName', 'EnvironmentId', 'ApplicationName', 'SolutionStackName', 'PlatformArn',
@@ -64,6 +67,7 @@ def get_application_info(region, req_app):
         for j in range(len(req_keys)):
             print("{0} : {1}".format(req_keys[j], req_info[j]))
 
+    # additional environment info
     response = conn.describe_environment_resources(
         EnvironmentName=req_info[0]
 
@@ -77,6 +81,7 @@ def get_application_info(region, req_app):
     print("Instance_info")
     print()
 
+    # instance info
     response = conn.describe_instances_health(
         EnvironmentName=req_info[0],
         EnvironmentId=req_info[1],

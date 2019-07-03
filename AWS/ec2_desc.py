@@ -2,19 +2,27 @@ import boto3
 
 
 def get_running_instances():
+    """
+    function that gets all running instance info
+    """
     conn = boto3.resource('ec2', region_name="ap-south-1")
     instances = conn.instances.filter()
+    # filter only running instance
     for instance in instances:
         if instance.state["Name"] == "running":
             print(instance.id, instance.instance_type, "ap-south-1")
 
 
 def get_all_instance_desc():
+    """
+    Function that lists and describes all instance info
+    """
     conn = boto3.client('ec2', region_name="ap-south-1")
     response = conn.describe_instances()
+    # selecting only req keys
     response = response['Reservations']
-    # print(response[0])
-    # print(response[1])
+
+    # Getiing Instance info
     for i in range(len(response)):
         temp = response[i]
         temp = temp['Instances'][0]
@@ -25,13 +33,14 @@ def get_all_instance_desc():
             for i in range(len(req_keys)):
                 if k == req_keys[i]:
                     req_info.append(temp[k])
-
+        # to get elastic ip details
         for i in range(len(req_info)):
             if req_keys[i] == "NetworkInterfaces":
                 temp = req_info[i]
-                if  temp == []:
+                if temp == []:
                     print("Instace terminated")
                 else:
+                    # refining to get specific info
                     temp = temp[0]
                     temp = temp['Association']
                     elastic_check = temp['IpOwnerId']
@@ -41,10 +50,9 @@ def get_all_instance_desc():
                         elastic_check = True
                     print("Elastic Ip: {}".format(elastic_check))
             else:
-                print("{0} : {1}".format(req_keys[i],req_info[i]))
+                print("{0} : {1}".format(req_keys[i], req_info[i]))
         print()
         req_info = []
-
 
 
 def get_specfic_instances(inst_id):

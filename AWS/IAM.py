@@ -2,10 +2,14 @@ import boto3
 
 
 def iam_names(region):
+    """
+    Funtion to get all iam names
+    """
     client = boto3.client('iam', region_name=region)
     response = client.list_users()
     response = response['Users']
     iam_name = []
+    # refining to get only iam names
     for i in range(len(response)):
         temp = response[i]
         iam_name.append(temp['UserName'])
@@ -13,12 +17,16 @@ def iam_names(region):
 
 
 def iam_details(region, iam_req):
+    """
+    Function to describe the info of the specific iam
+    """
     client = boto3.client('iam', region_name=region)
+    # selecting only the req iam
     response = client.get_user(
         UserName=iam_req
     )
     response = response['User']
-
+    # printing user details
     print("User Details:")
     print()
     for k, v in response.items():
@@ -28,6 +36,7 @@ def iam_details(region, iam_req):
             print("{0} : {1}".format(k, v))
     print()
 
+    # print iam policy details
     print("policy_details:")
     print()
     response = client.list_policies(
@@ -46,6 +55,8 @@ def iam_details(region, iam_req):
         UserName=iam_req
     )
     response = response['Groups'][0]
+
+    # getting iam group details
 
     print("Group Details:")
     print()
