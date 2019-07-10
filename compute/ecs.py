@@ -144,8 +144,11 @@ def get_all_cluster_info():
     for region in regions:
         conn = boto3.client('ecs', region_name=region)
         response = conn.describe_clusters()
+        print(response)
+
         # filtering out only the required info
         response = response['clusters']
+        print(response)
         for z in response:
             req_keys = ['clusterArn', 'clusterName', 'status', 'registeredContainerInstancesCount', 'runningTasksCount',
                         'pendingTasksCount', 'activeServicesCount']
@@ -156,78 +159,77 @@ def get_all_cluster_info():
                         req_info.append(z[k])
             cluster_info.append(req_info)
 
-        # listing the service
-        response = conn.list_services(
 
-        )
-        #  getting the service arns to use in describe func
-        response = response['serviceArns']
-        service_arns = []
-        for i in range(len(response)):
-            temp = response[i]
-            service_arns.append(temp)
-
-            # describing the arns
-
-        response = conn.describe_services(
-            services= service_arns
-        )
-
-        response = response['services']
-        req_keys = ['serviceArn', 'serviceName', 'clusterArn', 'loadBalancers', 'status', 'taskDefinition',
-                    'deployments',
-                    'networkConfiguration']
-
-        for z in response:
-            req_info = []
-            for k in z.keys():
-                for l in range(len(req_keys)):
-                    if k == req_keys[l]:
-                        req_info.append(z[k])
-            service_info.append(req_info)
-
-        # # task lists
-        # task_arns = []
-        # response = conn.list_tasks(
-        #     cluster=cluster_req
-        # )
-        # response = response['taskArns']
+        # # listing the service
+        # response = conn.list_services()
+        # #  getting the service arns to use in describe func
+        # response = response['serviceArns']
+        # service_arns = []
         # for i in range(len(response)):
-        #     task_arns.append(response[i])
-
-        # describing tasks:
-
-        response = conn.describe_tasks()
-
-        response = response['tasks']
-        keys_req = ['taskArn', 'clusterArn', 'taskDefinitionArn', 'lastStatus', 'cpu', 'memory',
-                    'group', 'launchType', 'attachments']
-        info = []
-        info_list = []
-
-        for z in response:
-            for k in z.keys():
-                for l in range(len(keys_req)):
-                    if k == keys_req[l]:
-                        info.append(z[k])
-            task_info.append(info)
-
-        for i in range(len(info)):
-            for j in range(len(keys_req)):
-                if keys_req[j] == 'attachments':
-                    temp = info_list[i]
-                    temp = temp[-1]
-                    temp = temp[0]
-                    temp = temp['details']
-                    temp = temp[1]
-                    del task_info[i]
-                    ec2 = boto3.client('ec2', region_name=region)
-                    response = ec2.describe_network_interfaces(
-                        NetworkInterfaceIds=[info_list[i][j]]
-                    )
-                    ip = response['NetworkInterfaces'][0]
-                    ip = ip['Association']['PublicIp']
-                    task_info.append(ip)
+        #     temp = response[i]
+        #     service_arns.append(temp)
+        #
+        #     # describing the arns
+        #
+        # response = conn.describe_services(
+        #     services= service_arns
+        # )
+        #
+        # response = response['services']
+        # req_keys = ['serviceArn', 'serviceName', 'clusterArn', 'loadBalancers', 'status', 'taskDefinition',
+        #             'deployments',
+        #             'networkConfiguration']
+        #
+        # for z in response:
+        #     req_info = []
+        #     for k in z.keys():
+        #         for l in range(len(req_keys)):
+        #             if k == req_keys[l]:
+        #                 req_info.append(z[k])
+        #     service_info.append(req_info)
+        #
+        # # # task lists
+        # # task_arns = []
+        # # response = conn.list_tasks(
+        # #     cluster=cluster_req
+        # # )
+        # # response = response['taskArns']
+        # # for i in range(len(response)):
+        # #     task_arns.append(response[i])
+        #
+        # # describing tasks:
+        #
+        # response = conn.describe_tasks()
+        #
+        # response = response['tasks']
+        # keys_req = ['taskArn', 'clusterArn', 'taskDefinitionArn', 'lastStatus', 'cpu', 'memory',
+        #             'group', 'launchType', 'attachments']
+        # info = []
+        # info_list = []
+        #
+        # for z in response:
+        #     for k in z.keys():
+        #         for l in range(len(keys_req)):
+        #             if k == keys_req[l]:
+        #                 info.append(z[k])
+        #     task_info.append(info)
+        #
+        # for i in range(len(info)):
+        #     for j in range(len(keys_req)):
+        #         if keys_req[j] == 'attachments':
+        #             temp = info_list[i]
+        #             temp = temp[-1]
+        #             temp = temp[0]
+        #             temp = temp['details']
+        #             temp = temp[1]
+        #             del task_info[i]
+        #             ec2 = boto3.client('ec2', region_name=region)
+        #             response = ec2.describe_network_interfaces(
+        #                 NetworkInterfaceIds=[info_list[i][j]]
+        #             )
+        #             ip = response['NetworkInterfaces'][0]
+        #             ip = ip['Association']['PublicIp']
+        #             task_info.append(ip)
 
     print(cluster_info)
     print(service_info)

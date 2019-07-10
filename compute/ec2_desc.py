@@ -2,16 +2,6 @@ import boto3
 import json
 
 
-#     list_inst = []
-#     for i in instance_list:
-#         dictionary = dict(zip(instance_list_info, i))
-#         list_inst.append(dictionary)
-#
-#     final_dict = {"Instances": list_inst}
-#     json_final = json.dumps(final_dict, indent=4)
-#     print(json_final)
-
-
 def get_all_instance_desc():
     """
     Function that lists and describes all instance info
@@ -84,7 +74,24 @@ def get_all_instance_desc():
                 req_info.append(elastic_check)
             # Appending final info to the req list
             instance_info.append(req_info)
-    # print(instance_info)
+
+    ec2_instances = []
+    req_keys = ['ImageId', 'InstanceId', 'InstanceType', 'LaunchTime', 'Placement', 'PublicIpAddress',
+                'SubnetId', 'VpcId', 'Elastic IP']
+    for i in instance_info:
+        if len(i) == 8:
+            i.insert(5, "Instance Stopped")
+        dictionary_inst = dict(zip(req_keys,i))
+        ec2_instances.append(dictionary_inst)
+
+    final_dict_inst = {"Instances":ec2_instances}
+    json_inst = json.dumps(final_dict_inst, indent=4,default=str)
+    print(json_inst)
+
+
+
+
+
 
 
 get_all_instance_desc()
