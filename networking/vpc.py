@@ -1,4 +1,5 @@
 import boto3
+import json
 
 
 def vpc_info(region):
@@ -24,4 +25,21 @@ def vpc_info(region):
     print(subnet_id)
 
 
-vpc_info("ap-south-1")
+def get_all_vpc_info():
+    conn = boto3.client('ec2')
+    regions = [region['RegionName'] for region in conn.describe_regions()['Regions']]
+    vpc_info = []
+    for region in regions:
+        req_info = []
+        conn = boto3.client('ec2', region_name=region)
+        response = conn.describe_vpcs()['Vpcs']
+        for res in response:
+            req_info.append(res)
+        vpc_info.append(req_info)
+    final_dict = {"VPC Ids": vpc_info}
+    json_final = json.dumps(final_dict, indent=4, default=str)
+    print(json_final)
+
+
+# vpc_info("ap-south-1")
+get_all_vpc_info()

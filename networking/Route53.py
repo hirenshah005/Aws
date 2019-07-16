@@ -1,4 +1,5 @@
 import boto3
+import json
 
 
 def get_route_details(region):
@@ -22,5 +23,25 @@ def get_route_dets(region, req_id):
     print("Name : {}".format(response['Name']))
 
 
-value = get_route_details('ap-south-1')
-get_route_dets('ap-south-1', value[0])
+def get_all_route_details():
+    conn = boto3.client('route53')
+    response = conn.list_hosted_zones()['HostedZones']
+    route_ids = []
+    route_info = []
+    for res in response:
+        route_ids.append(res['Id'])
+
+    for ids in route_ids:
+        response = conn.get_hosted_zone(
+            Id=ids
+        )['HostedZone']
+        route_info.append(response)
+
+    final_dict = {"Route 53": route_info}
+    json_final = json.dumps(final_dict, indent=4, default=str)
+    print(json_final)
+
+
+# value = get_route_details('ap-south-1')
+# get_route_dets('ap-south-1', value[0])
+get_all_route_details()
