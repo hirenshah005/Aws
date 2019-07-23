@@ -111,9 +111,11 @@ def get_full_info():
 
     repo_list = []
     img_list = []
+    # Keys for converting to dictionary
     req_keys_repo = ['repositoryArn', 'registryId', 'repositoryName', 'repositoryUri', 'createdAt']
     req_keys_imgs = ['repositoryName', 'imageDigest', 'imageTags', 'imageSizeInBytes', 'imagePushedAt']
 
+    # converting list to dictionary
     for i in repo_info:
         dict_repo = dict(zip(req_keys_repo, i))
         repo_list.append(dict_repo)
@@ -122,9 +124,11 @@ def get_full_info():
         dict_img = dict(zip(req_keys_imgs, i))
         img_list.append(dict_img)
 
+    # Making final dictoinary
     final_repo = {"Repostory Info": repo_list}
     final_img = {"Image List": img_list}
 
+    #   convert to json
     json_repo = json.dumps(final_repo,indent=4,default=str)
     json_img = json.dumps(final_img, indent=4, default=str)
 

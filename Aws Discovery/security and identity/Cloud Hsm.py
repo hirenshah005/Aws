@@ -11,8 +11,8 @@ def get_hsm_info():
         req_info.append(res)
         hsm_info.append(res)
 
-    hsm_dict = {"HSM":hsm_info}
-    hsm_json = json.dumps(hsm_dict,indent=4,default=str)
+    hsm_dict = {"HSM": hsm_info}
+    hsm_json = json.dumps(hsm_dict, indent=4, default=str)
 
     print(hsm_json)
 
