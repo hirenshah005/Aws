@@ -25,9 +25,10 @@ def create_iam(user_name, passwd):
         PasswordResetRequired=True
     )
 
-    iam.create_access_key(
+    response = iam.create_access_key(
         UserName=user_name
     )
+    print(response)
 
     iam.attach_user_policy(
         UserName=user_name,
