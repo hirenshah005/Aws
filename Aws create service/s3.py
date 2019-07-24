@@ -3,16 +3,20 @@ from datetime import datetime
 
 
 def create_s3_bucket(bucket_name):
+    """
+    create s3 bucket
+    """
     conn = boto3.client('s3')
     response = conn.create_bucket(
         Bucket=bucket_name,
     )
+    # put objects to bucket
     response = conn.put_object(
         Bucket=bucket_name,
         Key='generateClassifier.py',
         Body='sample'
     )
-
+    # set lifecycle
     response = conn.put_bucket_lifecycle(
         Bucket='string',
         LifecycleConfiguration={

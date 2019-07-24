@@ -3,6 +3,10 @@ import boto3
 
 def create_rds(dbname, mast_uname, mast_pass, dbinstance_type, engine_type, storage_alloc, retention_period,
                eng_version):
+    """
+    A function to create an rds instance
+    """
+    # create an rds instance
     rds = boto3.client('rds', region_name='ap-south-1')
     response = rds.create_db_instance(
         DBInstanceIdentifier=dbname,
