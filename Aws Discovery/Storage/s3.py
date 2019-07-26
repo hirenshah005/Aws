@@ -2,8 +2,12 @@ import boto3
 
 
 def get_bucket_list():
+    """
+    returns the buckets names
+    """
     regions = 0
     client = boto3.client('s3')
+    # get bucket names from list
     bucket_list_full_info = client.list_buckets()
     bucket_list_dict = bucket_list_full_info['Buckets']
     bucket_list = []
@@ -13,7 +17,11 @@ def get_bucket_list():
 
 
 def bucket_object_info(bucket_req):
+    """
+    returns the buckets object info
+    """
     client = boto3.client('s3')
+    # list all bucket objects info
     bucket_object = client.list_objects(
         Bucket=bucket_req
     )
@@ -26,7 +34,11 @@ def bucket_object_info(bucket_req):
 
 
 def object_info(region, obj_info, bucket_req):
+    """
+    A function that gives bucket information
+    """
     client = boto3.client('s3', region_name=region)
+
     bucket_object = client.list_objects(
         Bucket=bucket_req
     )
