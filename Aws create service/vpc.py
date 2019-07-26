@@ -71,4 +71,4 @@ def create_vpc(cidr_block, public_subnets, private_subnets):
         count += 1
 
 
-create_vpc('10.0.0.0/16', 1, 1)
+create_vpc('10.1.0.0/16', 1, 1)

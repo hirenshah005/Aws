@@ -54,6 +54,9 @@ def load_balancer_info(id, region):
 
 
 def get_full_info():
+    """
+    A fucntion to retrive all laod balancer information
+    """
     conn = boto3.client('ec2')
     regions = [region['RegionName'] for region in conn.describe_regions()['Regions']]
     load_balancer = []
@@ -76,7 +79,7 @@ def get_full_info():
                         lb_info.append(z[k])
             load_balancer.append(lb_info)
 
-            # select target group of load balancer
+        # select target group of load balancer
         target_grp = client.describe_target_groups()
         # refine to get specfic info using keys
         target_grp = target_grp['TargetGroups']
@@ -88,24 +91,31 @@ def get_full_info():
                     if k == req_params_trg[i]:
                         trgt_params.append(z[k])
             target_grps.append(trgt_params)
+
     load_balancer_list = []
     target_groups_list = []
+    # req keys for load balancer
     req_params_lb = ['LoadBalancerArn', 'DNSName', 'CreatedTime', 'LoadBalancerName', 'VpcId', 'Type',
                      'AvailabilityZones',
                      'SecurityGroups']
+    # required keys for target groups
     req_params_trg = ['TargetGroupName', 'Protocol', 'Port', 'HealthCheckPort']
 
+    # converting lists to dictionaries
     for i in load_balancer:
         dict_lb = dict(zip(req_params_lb, i))
         load_balancer_list.append(dict_lb)
 
+    # converting lists to dictionaries
     for i in target_grps:
         dict_tg = dict(zip(req_params_trg, i))
         target_groups_list.append(dict_tg)
 
+    # final dictionary
     final_load_dict = {"Load Balancers": load_balancer_list}
     final_trg_dict = {"Target Groups": target_groups_list}
 
+    # convert to json
     json_lb = json.dumps(final_load_dict, indent=4, default=str)
     json_trg = json.dumps(final_trg_dict, indent=4, default=str)
 

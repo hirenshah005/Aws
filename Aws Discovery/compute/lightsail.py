@@ -28,6 +28,9 @@ def get_lightsail_list():
 
 
 def lightsail_details(region, instance_name):
+    """
+    A function to get lightsail information
+    """
     client = boto3.client('lightsail', region_name=region)
     # selecting the required lighstail name
     instance_info = client.get_instance(
@@ -53,6 +56,9 @@ def lightsail_details(region, instance_name):
 
 
 def get_all_lightsail_info():
+    """
+    A function to get every lightsail info across all regions
+    """
     conn = boto3.client('lightsail')
     regions = [region['name'] for region in conn.get_regions()['regions']]
     lightsail_info = []
@@ -73,6 +79,7 @@ def get_all_lightsail_info():
                 if k == 'name':
                     instance_names.append(select_instance[k])
 
+        # get the instance info
         for j in instance_names:
             instance_info = client.get_instance(
                 instanceName=j
@@ -97,14 +104,19 @@ def get_all_lightsail_info():
             lightsail_info.append(req_info_list)
 
     lightsail_list = []
+    # required keys for final list
     req_info = ['name', 'arn', 'location', 'blueprintId', 'bundleId', 'publicIpAddress', 'hardware',
                 'sshKeyName']
 
+    # convert list into dictionary
     for i in lightsail_info:
         dict_lightsail = dict(zip(req_info,i))
         lightsail_list.append(dict_lightsail)
 
+    # final dict to convert to json
     final_dict = {"Lightsail":lightsail_list}
+
+    # cnvert dicionary to json
     json_final = json.dumps(final_dict, indent=4,default=str)
     print(json_final)
 

@@ -90,17 +90,24 @@ def get_all_cloudfront_info(ids):
                     temp = req_params[k]
                     group_ids.append(temp['Id'])
                     group_domains.append(temp['DomainName'])
+                # unrequired info
                 del req_info[j]
                 req_info.append(group_ids)
                 req_info.append(group_domains)
         cloud_info.append(req_info)
 
     cloud_list = []
+    # required keys for the list
     req_ids_dist = ['Id', 'ARN', 'DomainName', 'ID', 'DomainName']
+
+    # convert the cloud list to dictionaries
     for i in cloud_info:
         dict_cloud = dict(zip(req_ids_dist, i))
         cloud_list.append(dict_cloud)
+
+    # final dictionary
     final_dict = {"Cloud Front": cloud_list}
+    # convert dictionary to json
     json_final = json.dumps(final_dict, indent=4)
     print(json_final)
 
